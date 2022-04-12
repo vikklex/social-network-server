@@ -1,0 +1,6 @@
+{
+  "serverPort": 8080,
+  "dbURL": "mongodb://admin:admin@127.0.0.1:27017/main?retryWrites=true&w=majority",
+  "secretKey": "user-secret-key",
+  "secretRefreshKey": "user-secret-refresh-key"
+}
