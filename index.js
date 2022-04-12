@@ -5,8 +5,24 @@ const cors = require('cors');
 
 const config = require('config');
 const PORT = config.get('serverPort');
+const corsMiddleware = require('./middleware/cors.middleware');
 
 const app = express();
+
+const usersRouter = require('./users/users.routes');
+const authRouter = require('./auth/auth.routes');
+const postsRouter = require('./posts/posts.routes');
+
+app.use(corsMiddleware);
+app.use(express.json());
+app.use(cors());
+app.use(cookieParser());
+
+app.use('/public', express.static('public'));
+
+app.use('/v1/auth', authRouter);
+app.use('/v1/users', usersRouter);
+app.use('/v1/posts', postsRouter);
 
 const start = async () => {
   try {
