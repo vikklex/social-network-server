@@ -16,7 +16,11 @@ const User = new Schema(
     desc: { type: String, max: 150 },
     city: { type: String, max: 50 },
     from: { type: String, max: 50 },
-    relationship: { type: Number, enum: [1, 2, 3] },
+    relationships: {
+      type: String,
+      enum: ['single', 'married', 'fall in love'],
+    },
+    gender: { type: String, enum: ['male', 'female', 'other'] },
     friends: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
     following: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
   },

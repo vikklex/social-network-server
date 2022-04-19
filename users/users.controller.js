@@ -13,7 +13,7 @@ class UsersController {
 
   updateUser = async (req, res) => {
     const result = await usersService.updateUser(req.params.id, req.body);
-    res.status(result.status).send(result.body);
+    res.status(result.status).send({ msg: result.body });
   };
 
   uploadAvatar = async (req, res) => {
@@ -39,7 +39,6 @@ class UsersController {
 
   searchUser = async (req, res) => {
     const result = await usersService.searchUser(req);
-
     res.status(result.status).send({ msg: result.body });
   };
 }

@@ -42,7 +42,7 @@ class UsersService {
         const user = await User.findByIdAndUpdate(id, {
           $set: body,
         });
-        return { status: '200', body: 'Account has been updated' };
+        return { status: '200', body: user };
       } catch (err) {
         return NOT_FOUNDED;
       }
