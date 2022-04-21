@@ -17,7 +17,7 @@ class PostsService {
   async getPost(id) {
     try {
       const post = await Post.findById(id);
-      return { status: '200', body: post };
+      return { status: '200', body: { post } };
     } catch (err) {
       return NOT_FOUNDED;
     }
@@ -71,6 +71,25 @@ class PostsService {
       } else {
         return { status: '403', body: 'You can update only your post!' };
       }
+    } catch (err) {
+      return NOT_FOUNDED;
+    }
+  }
+
+  async uploadImage(req) {
+    const url = req.protocol + '://' + req.get('host');
+    let image = [];
+
+    req.files.map((file) => {
+      const uploadFile = url + '/public/' + file.filename;
+      image.push(uploadFile);
+    });
+
+    try {
+      const post = await Post.findByIdAndUpdate(req.params.id, {
+        'img': image,
+      });
+      return { status: '200', body: { image } };
     } catch (err) {
       return NOT_FOUNDED;
     }

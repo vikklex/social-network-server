@@ -30,10 +30,10 @@ class UsersService {
 
   async updateUser(id, body) {
     if (body.userId === id || body.isAdmin) {
-      if (body.password) {
+      if (body.password_hash) {
         try {
           const salt = await bcrypt.genSalt(10);
-          body.password_hash = await bcrypt.hash(body.password, salt);
+          body.password_hash = await bcrypt.hash(body.password_hash, salt);
         } catch (err) {
           return NOT_FOUNDED;
         }
@@ -60,8 +60,7 @@ class UsersService {
       const user = await User.findByIdAndUpdate(req.params.id, {
         'avatar': avatar,
       });
-
-      return { status: '200', body: 'Avatar has been updated' };
+      return { status: '200', body: { avatar } };
     } catch (err) {
       return NOT_FOUNDED;
     }

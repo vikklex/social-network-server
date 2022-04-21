@@ -34,6 +34,11 @@ class PostsController {
     res.status(result.status).send(result.body);
   };
 
+  uploadImage = async (req, res) => {
+    const result = await postsService.uploadImage(req);
+    res.status(result.status).send(result.body);
+  };
+
   likePost = async (req, res) => {
     const result = await postsService.likePost(req.params.id, req.body.userId);
     res.status(result.status).send(result.body);
