@@ -18,7 +18,6 @@ const check_utils = [
 router
   .post(
     '/registration',
-    check_utils,
     filesMiddleware.single('avatar'),
     authController.createUser,
   )

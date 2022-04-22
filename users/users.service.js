@@ -39,9 +39,12 @@ class UsersService {
         }
       }
       try {
-        const user = await User.findByIdAndUpdate(id, {
+        await User.findByIdAndUpdate(id, {
           $set: body,
         });
+
+        const user = await User.findById(id);
+
         return { status: '200', body: user };
       } catch (err) {
         return NOT_FOUNDED;
@@ -52,11 +55,11 @@ class UsersService {
   }
 
   async uploadAvatar(req) {
-    const url = req.protocol + '://' + req.get('host');
-
-    const avatar = url + '/public/' + req.file.filename;
-
     try {
+      const url = req.protocol + '://' + req.get('host');
+
+      const avatar = url + '/public/' + req.file.filename;
+
       const user = await User.findByIdAndUpdate(req.params.id, {
         'avatar': avatar,
       });
