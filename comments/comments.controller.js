@@ -6,8 +6,8 @@ class CommentsController {
     res.status(result.status).send(result.body);
   };
 
-  getComment = async (req, res) => {
-    const result = await commentsService.getComment(req.params.id);
+  getComments = async (req, res) => {
+    const result = await commentsService.getComments(req.params.postId);
     res.status(result.status).send(result.body);
   };
 

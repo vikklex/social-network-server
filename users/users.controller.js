@@ -3,6 +3,7 @@ const usersService = require('./users.service');
 class UsersController {
   getUser = async (req, res) => {
     const result = await usersService.getUser(req.params.id);
+    console.log(result.body);
     res.status(result.status).send({ user: result.body });
   };
 

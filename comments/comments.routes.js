@@ -7,7 +7,7 @@ const router = new Router();
 
 router
   .post('/', commentsController.createComment)
-  .get('/:id', commentsController.getComment)
+  .get('/timeline/:postId', commentsController.getComments)
   .put('/:id', commentsController.updateComment);
 
 module.exports = router;

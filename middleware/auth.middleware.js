@@ -8,8 +8,8 @@ const auth = (req, res, next) => {
   }
 
   try {
-    const token = req.headers.authorization.split(' ')[1];
-
+    const token = req.headers.authorization;
+    //const token = req.headers.authorization.split(' ')[1]; {for postman check}
     if (!token) {
       return res.status(401).json({ msg: 'Authorization error' });
     }
@@ -18,6 +18,7 @@ const auth = (req, res, next) => {
     if (!decoded) return res.status(500).json({ msg: 'Not valid' });
 
     const user = User.findOne({ _id: decoded.id });
+
     req.user = user;
 
     next();

@@ -8,7 +8,7 @@ router
   .post('/', filesMiddleware.single('img'), postsController.createPost)
   .get('/:id', postsController.getPost)
   .get('/profile/:first_name', postsController.getAllUserPosts)
-  .get('/timeline/:userId', postsController.getAllFollowingsPosts)
+  .get('/timeline/:userId', postsController.getAllPosts)
   .delete('/:id', postsController.deletePost)
   .put('/:id', postsController.updatePost)
   .put('/:id/like', postsController.likePost)

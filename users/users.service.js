@@ -4,12 +4,35 @@ const User = require('../models/User');
 const NOT_FOUNDED = { status: '404', body: 'User not founded' };
 const SERVER_ERROR = { status: '500', body: 'Server error' };
 
+const setUserBody = (user) => {
+  return {
+    id: user._id,
+    first_name: user.first_name,
+    last_name: user.last_name,
+    job: user.job,
+    email: user.email,
+    birthday: user.birthday,
+    avatar: user.avatar,
+    album: user.album,
+    followers: user.followers,
+    followings: user.followings,
+    is_admin: user.is_admin,
+    desc: user.desc,
+    city: user.city,
+    from: user.from,
+    status: user.status,
+    relationships: user.relationships,
+    gender: user.gender,
+    friends: user.friends,
+    following: user.following,
+  };
+};
+
 class UsersService {
   async getUser(id) {
     try {
       const user = await User.findById(id);
-      const { password_hash, updatedAt, ...other } = user._doc;
-      return { status: '200', body: other };
+      return { status: '200', body: setUserBody(user) };
     } catch (err) {
       return NOT_FOUNDED;
     }
@@ -35,7 +58,7 @@ class UsersService {
           const salt = await bcrypt.genSalt(10);
           body.password_hash = await bcrypt.hash(body.password_hash, salt);
         } catch (err) {
-          return NOT_FOUNDED;
+          return SERVER_ERROR;
         }
       }
       try {
@@ -45,12 +68,12 @@ class UsersService {
 
         const user = await User.findById(id);
 
-        return { status: '200', body: user };
+        return { status: '200', body: setUserBody(user) };
       } catch (err) {
         return NOT_FOUNDED;
       }
     } else {
-      return NOT_FOUNDED;
+      return SERVER_ERROR;
     }
   }
 
@@ -60,9 +83,10 @@ class UsersService {
 
       const avatar = url + '/public/' + req.file.filename;
 
-      const user = await User.findByIdAndUpdate(req.params.id, {
+      await User.findByIdAndUpdate(req.params.id, {
         'avatar': avatar,
       });
+
       return { status: '200', body: { avatar } };
     } catch (err) {
       return NOT_FOUNDED;
@@ -86,7 +110,7 @@ class UsersService {
           return { status: '403', body: 'You are follow already' };
         }
       } catch (err) {
-        return NOT_FOUNDED;
+        return SERVER_ERROR;
       }
     } else {
       return { status: '500', body: "You can't follow yourself" };
@@ -108,7 +132,7 @@ class UsersService {
           return { status: '403', body: 'You are unfollow already' };
         }
       } catch (err) {
-        return NOT_FOUNDED;
+        return SERVER_ERROR;
       }
     } else {
       return { status: '500', body: "You can't unfollow yourself" };
@@ -126,7 +150,13 @@ class UsersService {
       })
         .limit(10)
         .select('first_name last_name avatar');
-      return { status: '200', body: { users } };
+
+      let user = [];
+      users.forEach((u) => {
+        user.push(setUserBody(u));
+      });
+
+      return { status: '200', body: user };
     } catch (error) {
       return SERVER_ERROR;
     }

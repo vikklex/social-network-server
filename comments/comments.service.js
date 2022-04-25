@@ -7,7 +7,12 @@ const SERVER_ERROR = { status: '500', body: 'Server error' };
 
 class CommentsService {
   async createComment(body) {
-    const newComment = new Comment(body);
+    const newComment = new Comment({
+      user: body.user._id, //?
+      desc: body.desc,
+      tag: body.tag,
+      reply: body.reply,
+    });
 
     const post = await Post.findById(body.postId);
 
@@ -21,10 +26,11 @@ class CommentsService {
     }
   }
 
-  async getComment(id) {
+  async getComments(id) {
     try {
-      const comment = await Comment.findById(id);
-      return { status: '200', body: { comment } };
+      const post = await Post.findById(id);
+      const comments = await Comment.find({ postId: post._id });
+      return { status: '200', body: { comments } };
     } catch (err) {
       return SERVER_ERROR;
     }

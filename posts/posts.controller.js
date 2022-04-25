@@ -16,8 +16,8 @@ class PostsController {
     res.status(result.status).send(result.body);
   };
 
-  getAllFollowingsPosts = async (req, res) => {
-    const result = await postsService.getAllFollowingsPosts(req.params.userId);
+  getAllPosts = async (req, res) => {
+    const result = await postsService.getAllPosts(req.params.userId);
     res.status(result.status).send(result.body);
   };
 

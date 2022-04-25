@@ -33,6 +33,17 @@ class PostsService {
     }
   }
 
+  async getAllPosts(id) {
+    try {
+      const currentUser = await User.findById(id);
+      const posts = await Post.find({ userId: currentUser._id });
+
+      return { status: '200', body: posts };
+    } catch (err) {
+      return NOT_FOUNDED;
+    }
+  }
+
   async getAllFollowingsPosts(id) {
     try {
       const currentUser = await User.findById(id);
