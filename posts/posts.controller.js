@@ -18,6 +18,8 @@ class PostsController {
 
   getAllPosts = async (req, res) => {
     const result = await postsService.getAllPosts(req.params.userId);
+
+    console.log(result);
     res.status(result.status).send(result.body);
   };
 

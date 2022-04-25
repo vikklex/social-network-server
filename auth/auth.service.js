@@ -5,6 +5,31 @@ const User = require('../models/User');
 const config = require('config');
 
 const NOT_FOUNDED = { status: '404', body: 'User not founded' };
+const SERVER_ERROR = { status: '500', body: 'Server error' };
+
+const setUserBody = (user) => {
+  return {
+    id: user._id,
+    first_name: user.first_name,
+    last_name: user.last_name,
+    job: user.job,
+    email: user.email,
+    birthday: user.birthday,
+    avatar: user.avatar,
+    album: user.album,
+    followers: user.followers,
+    followings: user.followings,
+    is_admin: user.is_admin,
+    desc: user.desc,
+    city: user.city,
+    from: user.from,
+    status: user.status,
+    relationships: user.relationships,
+    gender: user.gender,
+    friends: user.friends,
+    following: user.following,
+  };
+};
 
 class AuthService {
   async createUser(validateErrors, first_name, last_name, email, password) {
@@ -37,7 +62,7 @@ class AuthService {
 
       return {
         status: '200',
-        body: { access_token, user, refresh_token },
+        body: { access_token, user: setUserBody(user), refresh_token },
       };
     } catch (err) {
       return NOT_FOUNDED;
@@ -67,7 +92,7 @@ class AuthService {
         status: '200',
         body: {
           access_token,
-          user: user,
+          user: setUserBody(user),
           refresh_token,
         },
       };
@@ -114,6 +139,7 @@ class AuthService {
       return { status: '500', body: 'Server error' };
     }
   }
+
   async generateAccessToken(req, res) {
     try {
       const rf_token = req.cookies.refresh_token;

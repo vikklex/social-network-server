@@ -2,24 +2,40 @@ const Post = require('../models/Post');
 const User = require('../models/User');
 
 const NOT_FOUNDED = { status: '404', body: 'Post not founded' };
+const SERVER_ERROR = { status: '500', body: 'Server error' };
+
+const setPostBody = (post) => {
+  return {
+    id: post._id,
+    userId: post.userId,
+    desc: post.desc,
+    img: post.img,
+    comments: post.comments,
+    likes: post.likes,
+    dislikes: post.dislikes,
+    createdAt: post.createdAt,
+    updatedAt: post.updatedAt,
+  };
+};
 
 class PostsService {
   async createPost(body) {
     const newPost = new Post(body);
     try {
       const savedPost = await newPost.save();
-      return { status: '200', body: savedPost };
+      console.log(savedPost);
+      return { status: '200', body: setPostBody(savedPost) };
     } catch (err) {
-      return { status: '500', body: 'Server error' };
+      return SERVER_ERROR;
     }
   }
 
   async getPost(id) {
     try {
       const post = await Post.findById(id);
-      return { status: '200', body: { post } };
+      return { status: '200', body: setPostBody(post) };
     } catch (err) {
-      return NOT_FOUNDED;
+      return SERVER_ERROR;
     }
   }
 
@@ -38,9 +54,14 @@ class PostsService {
       const currentUser = await User.findById(id);
       const posts = await Post.find({ userId: currentUser._id });
 
-      return { status: '200', body: posts };
+      let post = [];
+      posts.forEach((p) => {
+        post.push(setPostBody(p));
+      });
+
+      return { status: '200', body: post };
     } catch (err) {
-      return NOT_FOUNDED;
+      return SERVER_ERROR;
     }
   }
 
@@ -55,7 +76,7 @@ class PostsService {
       );
       return { status: '200', body: userPosts.concat(...friendsPosts) };
     } catch (err) {
-      return NOT_FOUNDED;
+      return SERVER_ERROR;
     }
   }
 
@@ -69,7 +90,7 @@ class PostsService {
         return { status: '403', body: 'You can delete only your post!' };
       }
     } catch (err) {
-      return NOT_FOUNDED;
+      return SERVER_ERROR;
     }
   }
 
@@ -83,7 +104,7 @@ class PostsService {
         return { status: '403', body: 'You can update only your post!' };
       }
     } catch (err) {
-      return NOT_FOUNDED;
+      return SERVER_ERROR;
     }
   }
 
@@ -97,7 +118,7 @@ class PostsService {
     });
 
     try {
-      const post = await Post.findByIdAndUpdate(req.params.id, {
+      await Post.findByIdAndUpdate(req.params.id, {
         'img': image,
       });
       return { status: '200', body: { image } };
