@@ -151,12 +151,13 @@ class UsersService {
         .limit(10)
         .select('first_name last_name avatar');
 
-      let user = [];
+      let result = [];
+
       users.forEach((u) => {
-        user.push(setUserBody(u));
+        result.push(setUserBody(u));
       });
 
-      return { status: '200', body: user };
+      return { status: '200', body: result };
     } catch (error) {
       return SERVER_ERROR;
     }

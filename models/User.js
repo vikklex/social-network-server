@@ -17,7 +17,8 @@ const User = new Schema(
     desc: { type: String, max: 150 },
     city: { type: String, max: 50 },
     from: { type: String, max: 50 },
-    status: { type: String, max: 50 },
+    status: { type: String, default: '', max: 50 },
+
     relationships: {
       type: String,
       enum: ['single', 'married', 'fall in love'],

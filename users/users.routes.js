@@ -10,7 +10,7 @@ router
   .get('/search/search', authMiddleware, usersController.searchUser)
   .delete('/:id', authMiddleware, usersController.deleteUser)
   .put('/:id', authMiddleware, usersController.updateUser)
-  .put('/:id/follow', authMiddleware, usersController.followUser)
+  .put('/:id/follow', /*authMiddleware*/ usersController.followUser)
   .put('/:id/unfollow', authMiddleware, usersController.unfollowUser)
   .put(
     '/:id/user-profile',

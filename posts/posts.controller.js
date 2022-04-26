@@ -16,18 +16,13 @@ class PostsController {
     res.status(result.status).send(result.body);
   };
 
-  getAllPosts = async (req, res) => {
-    const result = await postsService.getAllPosts(req.params.userId);
-
-    console.log(result);
+  getAllFriendsPosts = async (req, res) => {
+    const result = await postsService.getAllFriendsPosts(req.params.id);
     res.status(result.status).send(result.body);
   };
 
-  deletePost = async (req, res) => {
-    const result = await postsService.deletePost(
-      req.params.id,
-      req.body.userId,
-    );
+  getAllPosts = async (req, res) => {
+    const result = await postsService.getAllPosts(req.params.userId);
     res.status(result.status).send(result.body);
   };
 
@@ -43,6 +38,14 @@ class PostsController {
 
   likePost = async (req, res) => {
     const result = await postsService.likePost(req.params.id, req.body.userId);
+    res.status(result.status).send(result.body);
+  };
+
+  deletePost = async (req, res) => {
+    const result = await postsService.deletePost(
+      req.params.id,
+      req.body.userId,
+    );
     res.status(result.status).send(result.body);
   };
 }

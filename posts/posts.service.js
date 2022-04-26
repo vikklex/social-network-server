@@ -23,7 +23,7 @@ class PostsService {
     const newPost = new Post(body);
     try {
       const savedPost = await newPost.save();
-      console.log(savedPost);
+
       return { status: '200', body: setPostBody(savedPost) };
     } catch (err) {
       return SERVER_ERROR;
@@ -65,7 +65,7 @@ class PostsService {
     }
   }
 
-  async getAllFollowingsPosts(id) {
+  async getAllFriendsPosts(id) {
     try {
       const currentUser = await User.findById(id);
       const userPosts = await Post.find({ userId: currentUser._id });
@@ -74,21 +74,8 @@ class PostsService {
           return Post.find({ userId: friendId });
         }),
       );
-      return { status: '200', body: userPosts.concat(...friendsPosts) };
-    } catch (err) {
-      return SERVER_ERROR;
-    }
-  }
 
-  async deletePost(id, userId) {
-    try {
-      const post = await Post.findById(id);
-      if (post.userId === userId) {
-        await post.deleteOne();
-        return { status: '200', body: 'Post has been deleted' };
-      } else {
-        return { status: '403', body: 'You can delete only your post!' };
-      }
+      return { status: '200', body: friendsPosts.flat() };
     } catch (err) {
       return SERVER_ERROR;
     }
@@ -139,6 +126,20 @@ class PostsService {
       }
     } catch (err) {
       return NOT_FOUNDED;
+    }
+  }
+
+  async deletePost(id, userId) {
+    try {
+      const post = await Post.findById(id);
+      // if (post.userId === userId) {
+      await post.deleteOne();
+      return { status: '200', body: 'Post has been deleted' };
+      /* } else {
+        return { status: '403', body: 'You can delete only your post!' };
+      }*/
+    } catch (err) {
+      return SERVER_ERROR;
     }
   }
 }

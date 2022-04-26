@@ -15,7 +15,11 @@ router
   .get('/:id', authMiddleware, postsController.getPost)
   .get('/profile/:first_name', authMiddleware, postsController.getAllUserPosts)
   .get('/timeline/:userId', authMiddleware, postsController.getAllPosts)
-  .delete('/:id', authMiddleware, postsController.deletePost)
+  .get(
+    '/friendsPosts/:id',
+    //authMiddleware,
+    postsController.getAllFriendsPosts,
+  )
   .put('/:id', authMiddleware, postsController.updatePost)
   .put('/:id/like', authMiddleware, postsController.likePost)
   .put(
@@ -23,6 +27,7 @@ router
     authMiddleware,
     filesMiddleware.array('img', 8),
     postsController.uploadImage,
-  );
+  )
+  .delete('/:id', authMiddleware, postsController.deletePost);
 
 module.exports = router;

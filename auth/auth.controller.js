@@ -26,7 +26,6 @@ class AuthController {
         maxAge: AGE,
       });
 
-    console.log(result.body);
     res.status(result.status).send({ msg: result.body });
   };
 
