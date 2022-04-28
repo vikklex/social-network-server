@@ -15,11 +15,7 @@ router
   .get('/:id', authMiddleware, postsController.getPost)
   .get('/profile/:first_name', authMiddleware, postsController.getAllUserPosts)
   .get('/timeline/:userId', authMiddleware, postsController.getAllPosts)
-  .get(
-    '/friendsPosts/:id',
-    //authMiddleware,
-    postsController.getAllFriendsPosts,
-  )
+  .get('/friendsPosts/:id', authMiddleware, postsController.getAllFriendsPosts)
   .put('/:id', authMiddleware, postsController.updatePost)
   .put('/:id/like', authMiddleware, postsController.likePost)
   .put(

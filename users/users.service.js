@@ -32,6 +32,24 @@ class UsersService {
   async getUser(id) {
     try {
       const user = await User.findById(id);
+      const followings = [];
+      const followers = [];
+
+      for (const followingId of user.followings) {
+        await User.findById(followingId).then((user) =>
+          followings.push(setUserBody(user)),
+        );
+      }
+
+      for (const followerId of user.followers) {
+        await User.findById(followerId).then((user) =>
+          followers.push(setUserBody(user)),
+        );
+      }
+
+      user.followings = followings;
+      user.followers = followers;
+
       return { status: '200', body: setUserBody(user) };
     } catch (err) {
       return NOT_FOUNDED;
@@ -93,18 +111,37 @@ class UsersService {
     }
   }
 
+  async uploadAlbum(req) {
+    const user = await User.findById(req.params.id);
+    const url = req.protocol + '://' + req.get('host');
+    let album = user.album;
+
+    req.files.map((file) => {
+      const uploadFile = url + '/public/' + file.filename;
+      album.push(uploadFile);
+    });
+
+    try {
+      await User.findByIdAndUpdate(req.params.id, {
+        'album': album,
+      });
+      return { status: '200', body: { album } };
+    } catch (err) {
+      return SERVER_ERROR;
+    }
+  }
+
   async followUser(id, userId) {
     if (userId !== id) {
       try {
         const user = await User.findById(id);
         const currentUser = await User.findById(userId);
 
-        if (!user.followers.includes(userId)) {
-          await user.updateOne({ $push: { followers: userId } });
+        if (!user.followings.includes(userId)) {
+          await user.updateOne({ $push: { followings: userId } });
           await currentUser.updateOne({
-            $push: { followings: id },
+            $push: { followers: id },
           });
-
           return { status: '200', body: 'User has been followed' };
         } else {
           return { status: '403', body: 'You are follow already' };
@@ -123,13 +160,57 @@ class UsersService {
         const user = await User.findById(id);
         const currentUser = await User.findById(userId);
 
-        if (user.followers.includes(userId)) {
-          await user.updateOne({ $pull: { followers: userId } });
-          await currentUser.updateOne({ $pull: { followings: id } });
-
+        if (user.followings.includes(userId)) {
+          await user.updateOne({ $pull: { followings: userId } });
+          await currentUser.updateOne({ $pull: { followers: id } });
           return { status: '200', body: 'User has been unfollow' };
         } else {
           return { status: '403', body: 'You are unfollow already' };
+        }
+      } catch (err) {
+        return SERVER_ERROR;
+      }
+    } else {
+      return { status: '500', body: "You can't unfollow yourself" };
+    }
+  }
+
+  async userAddFriend(id, userId) {
+    if (userId !== id) {
+      try {
+        const user = await User.findById(id);
+        const currentUser = await User.findById(userId);
+
+        if (!user.followers.includes(userId)) {
+          await user.updateOne({ $push: { friends: userId } });
+          await currentUser.updateOne({
+            $push: { following: id },
+          });
+
+          return { status: '200', body: 'You are add friend' };
+        } else {
+          return { status: '403', body: 'You are friends already' };
+        }
+      } catch (err) {
+        return SERVER_ERROR;
+      }
+    } else {
+      return { status: '500', body: "You can't make friends with yourself" };
+    }
+  }
+
+  async userDeleteFriend(id, userId) {
+    if (userId !== id) {
+      try {
+        const user = await User.findById(id);
+        const currentUser = await User.findById(userId);
+
+        if (user.followers.includes(userId)) {
+          await user.updateOne({ $pull: { friends: userId } });
+          await currentUser.updateOne({ $pull: { followings: id } });
+          return { status: '200', body: 'Friend has been unfollow' };
+        } else {
+          return { status: '403', body: 'You are not fri already' };
         }
       } catch (err) {
         return SERVER_ERROR;

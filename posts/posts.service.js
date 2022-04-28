@@ -18,6 +18,18 @@ const setPostBody = (post) => {
   };
 };
 
+const getPostData = (user, post) => {
+  return {
+    id: post._id,
+    desc: post.desc,
+    createdAt: post.createdAt,
+    first_name: user.first_name,
+    last_name: user.last_name,
+    avatar: user.avatar,
+    img: post.img,
+  };
+};
+
 class PostsService {
   async createPost(body) {
     const newPost = new Post(body);
@@ -68,14 +80,18 @@ class PostsService {
   async getAllFriendsPosts(id) {
     try {
       const currentUser = await User.findById(id);
-      const userPosts = await Post.find({ userId: currentUser._id });
-      const friendsPosts = await Promise.all(
-        currentUser.followings.map((friendId) => {
-          return Post.find({ userId: friendId });
-        }),
-      );
+      const result = [];
 
-      return { status: '200', body: friendsPosts.flat() };
+      for (const friendId of currentUser.followings) {
+        await User.findById(friendId).then(async (user) => {
+          await Post.find({ userId: friendId }).then((posts) => {
+            for (const post of posts) {
+              result.push(getPostData(user, post));
+            }
+          });
+        });
+      }
+      return { status: '200', body: result };
     } catch (err) {
       return SERVER_ERROR;
     }

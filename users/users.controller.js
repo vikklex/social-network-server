@@ -22,6 +22,27 @@ class UsersController {
     res.status(result.status).send(result.body);
   };
 
+  uploadAlbum = async (req, res) => {
+    const result = await usersService.uploadAlbum(req);
+    res.status(result.status).send(result.body);
+  };
+
+  addFriend = async (req, res) => {
+    const result = await usersService.userAddFriend(
+      req.params.id,
+      req.body.userId,
+    );
+    res.status(result.status).send(result.body);
+  };
+
+  deleteFriend = async (req, res) => {
+    const result = await usersService.userDeleteFriend(
+      req.params.id,
+      req.body.userId,
+    );
+    res.status(result.status).send(result.body);
+  };
+
   followUser = async (req, res) => {
     const result = await usersService.followUser(
       req.params.id,
