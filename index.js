@@ -12,6 +12,7 @@ const app = express();
 const usersRouter = require('./users/users.routes');
 const authRouter = require('./auth/auth.routes');
 const postsRouter = require('./posts/posts.routes');
+const reactionsRouter = require('./reactions/reactions.routes');
 const commentsRouter = require('./comments/comments.routes');
 
 app.use(corsMiddleware);
@@ -24,7 +25,8 @@ app.use('/public', express.static('public'));
 app.use('/v1/auth', authRouter);
 app.use('/v1/users', usersRouter);
 app.use('/v1/posts', postsRouter);
-app.use('/v1/comments', commentsRouter)
+app.use('/v1/reactions', reactionsRouter);
+app.use('/v1/comments', commentsRouter);
 
 const start = async () => {
   try {

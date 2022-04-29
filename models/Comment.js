@@ -10,7 +10,7 @@ const Comment = new Schema(
     reply: mongoose.Types.ObjectId,
     likes: [{ type: mongoose.Types.ObjectId, ref: 'user' }],
     user: { type: mongoose.Types.ObjectId, ref: 'user' },
-    postId: { type: mongoose.Types.ObjectId, ref: 'post' },
+    postId: { type: mongoose.Types.ObjectId, ref: 'Post' },
   },
   { timestamps: true },
 );
