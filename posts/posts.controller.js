@@ -18,7 +18,6 @@ class PostsController {
 
   getAllFriendsPosts = async (req, res) => {
     const result = await postsService.getAllFriendsPosts(req.params.id);
-
     res.status(result.status).send(result.body);
   };
 

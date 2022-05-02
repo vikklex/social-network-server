@@ -17,7 +17,5 @@ const setUserBody = (user) => {
     status: user.status,
     relationships: user.relationships,
     gender: user.gender,
-    friends: user.friends,
-    following: user.following,
   };
 };

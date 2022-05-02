@@ -2,7 +2,6 @@ const Reaction = require('../models/Reaction');
 const Post = require('../models/Post');
 const User = require('../models/User');
 
-const NOT_FOUNDED = { status: '404', body: 'Post not founded' };
 const SERVER_ERROR = { status: '500', body: 'Server error' };
 
 const setReactionBody = (reaction) => {
@@ -16,18 +15,6 @@ const setReactionBody = (reaction) => {
   };
 };
 
-const getPostData = (user, post) => {
-  return {
-    id: post._id,
-    desc: post.desc,
-    createdAt: post.createdAt,
-    first_name: user.first_name,
-    last_name: user.last_name,
-    avatar: user.avatar,
-    img: post.img,
-  };
-};
-
 class ReactionsService {
   async createReaction(body) {
     const duplicateReaction = await Reaction.findOneAndRemove({
@@ -37,10 +24,7 @@ class ReactionsService {
     });
 
     if (duplicateReaction) {
-      return {
-        status: '400',
-        body: `Reaction already exists`,
-      };
+      return this.getAllPostReactions(body.postId);
     }
 
     const difReaction = await Reaction.findOne({
@@ -74,8 +58,8 @@ class ReactionsService {
     const newReaction = new Reaction(body);
 
     try {
-      const savedReaction = await newReaction.save();
-      return { status: '200', body: setReactionBody(savedReaction) };
+      await newReaction.save();
+      return this.getAllPostReactions(body.postId);
     } catch (err) {
       return SERVER_ERROR;
     }

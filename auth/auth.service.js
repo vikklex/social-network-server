@@ -70,10 +70,7 @@ class AuthService {
   }
   async loginUser(email, password) {
     try {
-      const user = await User.findOne({ email }).populate(
-        'friends following',
-        '-password',
-      );
+      const user = await User.findOne({ email }).populate('password_hash');
 
       if (!user) {
         return NOT_FOUNDED;

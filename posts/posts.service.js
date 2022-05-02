@@ -21,6 +21,7 @@ const setPostBody = (post) => {
 const getPostData = (user, post) => {
   return {
     id: post._id,
+    userId: post.userId,
     desc: post.desc,
     createdAt: post.createdAt,
     first_name: user.first_name,
@@ -45,6 +46,7 @@ class PostsService {
   async getPost(id) {
     try {
       const post = await Post.findById(id);
+
       return { status: '200', body: setPostBody(post) };
     } catch (err) {
       return SERVER_ERROR;
@@ -55,6 +57,7 @@ class PostsService {
     try {
       const user = await User.findOne({ first_name });
       const posts = await Post.find({ userId: user._id });
+
       return { status: '200', body: posts };
     } catch (err) {
       return NOT_FOUNDED;
@@ -65,11 +68,12 @@ class PostsService {
     try {
       const currentUser = await User.findById(id);
       const posts = await Post.find({ userId: currentUser._id });
+      const post = [];
 
-      let post = [];
       posts.forEach((p) => {
         post.push(setPostBody(p));
       });
+      post.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
       return { status: '200', body: post };
     } catch (err) {
@@ -91,6 +95,8 @@ class PostsService {
           });
         });
       }
+      result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
       return { status: '200', body: result };
     } catch (err) {
       return SERVER_ERROR;
@@ -102,6 +108,7 @@ class PostsService {
       const post = await Post.findById(id);
       if (post.userId === body.userId) {
         await post.updateOne({ $set: body });
+
         return { status: '200', body: 'Post has been updated' };
       } else {
         return { status: '403', body: 'You can update only your post!' };
@@ -113,7 +120,7 @@ class PostsService {
 
   async uploadImage(req) {
     const url = req.protocol + '://' + req.get('host');
-    let image = [];
+    const image = [];
 
     req.files.map((file) => {
       const uploadFile = url + '/public/' + file.filename;
@@ -124,9 +131,10 @@ class PostsService {
       await Post.findByIdAndUpdate(req.params.id, {
         'img': image,
       });
+
       return { status: '200', body: { image } };
     } catch (err) {
-      return NOT_FOUNDED;
+      return SERVER_ERROR;
     }
   }
 
@@ -135,9 +143,11 @@ class PostsService {
       const post = await Post.findById(id);
       if (!post.likes.includes(userId)) {
         await post.updateOne({ $push: { likes: userId } });
+
         return { status: '200', body: 'Post has been liked' };
       } else {
         await post.updateOne({ $pull: { likes: userId } });
+
         return { status: '200', body: 'Post has been disliked' };
       }
     } catch (err) {
@@ -145,15 +155,12 @@ class PostsService {
     }
   }
 
-  async deletePost(id, userId) {
+  async deletePost(id) {
     try {
       const post = await Post.findById(id);
-      // if (post.userId === userId) {
       await post.deleteOne();
+
       return { status: '200', body: 'Post has been deleted' };
-      /* } else {
-        return { status: '403', body: 'You can delete only your post!' };
-      }*/
     } catch (err) {
       return SERVER_ERROR;
     }

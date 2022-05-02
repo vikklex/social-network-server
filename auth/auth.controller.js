@@ -34,6 +34,7 @@ class AuthController {
       req.body.email,
       req.body.password_hash,
     );
+
     const { refresh_token } = result.body;
 
     refresh_token &&

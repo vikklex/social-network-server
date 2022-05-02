@@ -1,4 +1,4 @@
-const { default: mongoose } = require('mongoose');
+const { mongoose } = require('mongoose');
 const { Schema, model } = require('mongoose');
 
 const Comment = new Schema(

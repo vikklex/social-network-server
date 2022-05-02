@@ -23,8 +23,9 @@ const setUserBody = (user) => {
     status: user.status,
     relationships: user.relationships,
     gender: user.gender,
-    friends: user.friends,
-    following: user.following,
+    posts_visibility: user.posts_visibility,
+    friends_visibility: user.friends_visibility,
+    album_visibility: user.album_visibility,
   };
 };
 
@@ -70,6 +71,7 @@ class UsersService {
   }
 
   async updateUser(id, body) {
+    console.log(body);
     if (body.userId === id || body.isAdmin) {
       if (body.password_hash) {
         try {
@@ -175,51 +177,6 @@ class UsersService {
     }
   }
 
-  async userAddFriend(id, userId) {
-    if (userId !== id) {
-      try {
-        const user = await User.findById(id);
-        const currentUser = await User.findById(userId);
-
-        if (!user.followers.includes(userId)) {
-          await user.updateOne({ $push: { friends: userId } });
-          await currentUser.updateOne({
-            $push: { following: id },
-          });
-
-          return { status: '200', body: 'You are add friend' };
-        } else {
-          return { status: '403', body: 'You are friends already' };
-        }
-      } catch (err) {
-        return SERVER_ERROR;
-      }
-    } else {
-      return { status: '500', body: "You can't make friends with yourself" };
-    }
-  }
-
-  async userDeleteFriend(id, userId) {
-    if (userId !== id) {
-      try {
-        const user = await User.findById(id);
-        const currentUser = await User.findById(userId);
-
-        if (user.followers.includes(userId)) {
-          await user.updateOne({ $pull: { friends: userId } });
-          await currentUser.updateOne({ $pull: { followings: id } });
-          return { status: '200', body: 'Friend has been unfollow' };
-        } else {
-          return { status: '403', body: 'You are not fri already' };
-        }
-      } catch (err) {
-        return SERVER_ERROR;
-      }
-    } else {
-      return { status: '500', body: "You can't unfollow yourself" };
-    }
-  }
-
   async searchUser(req) {
     try {
       const regex = new RegExp(req.query.username, 'i');
@@ -235,7 +192,11 @@ class UsersService {
       let result = [];
 
       users.forEach((u) => {
-        result.push(setUserBody(u));
+        if (u._id == req.body.userId) {
+          return;
+        } else {
+          result.push(setUserBody(u));
+        }
       });
 
       return { status: '200', body: result };

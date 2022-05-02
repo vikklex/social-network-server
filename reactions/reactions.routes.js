@@ -5,11 +5,8 @@ const authMiddleware = require('../middleware/auth.middleware');
 const router = new Router();
 
 router
-  .post('/', /*authMiddleware,*/ reactionsController.createReaction)
-  .get('/:id', /*authMiddleware,*/ reactionsController.getAllPostReactions)
-  .get(
-    '/user/:id',
-    /*authMiddleware,*/ reactionsController.getAllUserReactions,
-  );
+  .post('/', authMiddleware, reactionsController.createReaction)
+  .get('/:id', authMiddleware, reactionsController.getAllPostReactions)
+  .get('/user/:id', authMiddleware, reactionsController.getAllUserReactions);
 
 module.exports = router;

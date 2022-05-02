@@ -7,13 +7,11 @@ const router = new Router();
 
 router
   .get('/:id', authMiddleware, usersController.getUser)
-  .get('/search/search', authMiddleware, usersController.searchUser)
+  .put('/search/search', authMiddleware, usersController.searchUser)
   .delete('/:id', authMiddleware, usersController.deleteUser)
   .put('/:id', authMiddleware, usersController.updateUser)
-  .put('/:id/follow', /*authMiddleware*/ usersController.followUser)
-  .put('/:id/unfollow', /*authMiddleware*/ usersController.unfollowUser)
-  //.put('/:id/addFriend', /*authMiddleware*/ usersController.addFriend)
-  //.put('/:id/delFriend', /*authMiddleware*/ usersController.deleteFriend)
+  .put('/:id/follow', usersController.followUser)
+  .put('/:id/unfollow', usersController.unfollowUser)
   .put(
     '/:id/user-profile',
     filesMiddleware.single('avatar'),

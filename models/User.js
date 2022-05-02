@@ -18,15 +18,17 @@ const User = new Schema(
     city: { type: String, max: 50 },
     from: { type: String, max: 50 },
     status: { type: String, default: '', max: 50 },
-
     relationships: {
       type: String,
       enum: ['single', 'married', 'fall in love'],
     },
     gender: { type: String, enum: ['male', 'female', 'other'] },
-    friends: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
-    following: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
+
+    posts_visibility: { type: Boolean, default: true },
+    friends_visibility: { type: Boolean, default: true },
+    album_visibility: { type: Boolean, default: true },
   },
+
   { timestamps: true },
 );
 
