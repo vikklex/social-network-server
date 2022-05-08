@@ -71,7 +71,6 @@ class UsersService {
   }
 
   async updateUser(id, body) {
-    console.log(body);
     if (body.userId === id || body.isAdmin) {
       if (body.password_hash) {
         try {
@@ -110,6 +109,24 @@ class UsersService {
       return { status: '200', body: { avatar } };
     } catch (err) {
       return NOT_FOUNDED;
+    }
+  }
+
+  async deleteAvatar(req) {
+    try {
+      const fs = require('fs');
+      const user = await User.findById(req.params.id);
+
+      fs.unlink('public' + '/1651825096005-dobby.jpeg', (err) => {
+        if (err) console.log(err);
+        else {
+          console.log('file deleted');
+        }
+      });
+      const savedUser = await user.save();
+      return { status: '200', body: { savedUser } };
+    } catch (err) {
+      return SERVER_ERROR;
     }
   }
 

@@ -1,5 +1,4 @@
 const Reaction = require('../models/Reaction');
-const Post = require('../models/Post');
 const User = require('../models/User');
 
 const SERVER_ERROR = { status: '500', body: 'Server error' };
@@ -9,9 +8,25 @@ const setReactionBody = (reaction) => {
     id: reaction._id,
     reactionType: reaction.reactionType,
     userId: reaction.userId,
+    likedUser: reaction.likedUser,
     postId: reaction.postId,
     createdAt: reaction.createdAt,
     updatedAt: reaction.updatedAt,
+  };
+};
+
+const getReactionData = (user, reaction) => {
+  return {
+    id: reaction.id,
+    userId: reaction.userId,
+    reactionType: reaction.reactionType,
+    postId: reaction.postId,
+    createdAt: reaction.createdAt,
+    updatedAt: reaction.updatedAt,
+    first_name: user.first_name,
+    last_name: user.last_name,
+    avatar: user.avatar,
+    gender: user.gender,
   };
 };
 
@@ -20,6 +35,7 @@ class ReactionsService {
     const duplicateReaction = await Reaction.findOneAndRemove({
       reactionType: body.reactionType,
       userId: body.userId,
+      likedUser: body.likedUser,
       postId: body.postId,
     });
 
@@ -77,6 +93,33 @@ class ReactionsService {
       });
 
       return { status: '200', body: result };
+    } catch (err) {
+      return SERVER_ERROR;
+    }
+  }
+
+  async getAllReactionsForUser(id) {
+    try {
+      const reactions = await Reaction.find({
+        likedUser: id,
+      });
+
+      const result = [];
+      const data = [];
+
+      reactions.map((reaction) => {
+        result.push(setReactionBody(reaction));
+      });
+
+      for (const res of result) {
+        await Reaction.find({ id: res.id, likedUser: id }).then(
+          await User.findById(res.userId).then(async (user) => {
+            data.push(getReactionData(user, res));
+          }),
+        );
+      }
+
+      return { status: '200', body: data };
     } catch (err) {
       return SERVER_ERROR;
     }

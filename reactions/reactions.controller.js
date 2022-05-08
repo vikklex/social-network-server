@@ -11,6 +11,12 @@ class ReactionsController {
     res.status(result.status).send(result.body);
   };
 
+  getAllReactionsForUser = async (req, res) => {
+    const result = await reactionsService.getAllReactionsForUser(req.params.id);
+
+    res.status(result.status).send(result.body);
+  };
+
   getAllUserReactions = async (req, res) => {
     const result = await reactionsService.getAllUserReactions(req.params.id);
     res.status(result.status).send(result.body);

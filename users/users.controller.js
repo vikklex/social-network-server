@@ -22,6 +22,11 @@ class UsersController {
     res.status(result.status).send(result.body);
   };
 
+  deleteAvatar = async (req, res) => {
+    const result = await usersService.deleteAvatar(req);
+    res.status(result.status).send(result.body);
+  };
+
   uploadAlbum = async (req, res) => {
     const result = await usersService.uploadAlbum(req);
     res.status(result.status).send(result.body);

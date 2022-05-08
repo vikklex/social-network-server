@@ -8,7 +8,6 @@ const router = new Router();
 router
   .get('/:id', authMiddleware, usersController.getUser)
   .put('/search/search', authMiddleware, usersController.searchUser)
-  .delete('/:id', authMiddleware, usersController.deleteUser)
   .put('/:id', authMiddleware, usersController.updateUser)
   .put('/:id/follow', usersController.followUser)
   .put('/:id/unfollow', usersController.unfollowUser)
@@ -23,5 +22,12 @@ router
     filesMiddleware.array('album', 10),
     authMiddleware,
     usersController.uploadAlbum,
+  )
+  .delete('/:id', authMiddleware, usersController.deleteUser)
+  .delete(
+    '/:id/user-avatar',
+    filesMiddleware.single('avatar'),
+
+    usersController.deleteAvatar,
   );
 module.exports = router;
