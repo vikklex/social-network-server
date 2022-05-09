@@ -66,7 +66,7 @@ class UsersController {
 
   searchUser = async (req, res) => {
     const result = await usersService.searchUser(req);
-    res.status(result.status).send({ msg: result.body });
+    res.status(result.status).send(result.body);
   };
 }
 

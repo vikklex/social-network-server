@@ -20,9 +20,9 @@ const User = new Schema(
     status: { type: String, default: '', max: 50 },
     relationships: {
       type: String,
-      enum: ['single', 'married', 'fall in love'],
+      enum: ['Single', 'Married', 'Fall in love'],
     },
-    gender: { type: String, enum: ['male', 'female', 'other'] },
+    gender: { type: String, enum: ['Male', 'Female', 'Other'] },
 
     posts_visibility: { type: Boolean, default: true },
     friends_visibility: { type: Boolean, default: true },

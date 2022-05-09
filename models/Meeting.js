@@ -10,6 +10,7 @@ const Meeting = new Schema(
     participants: { type: Array, default: [] },
     title: { type: String },
     description: { type: String },
+    importance: { type: String, enum: ['success', 'warning', 'error'] },
     date: { type: Date },
     startTime: { type: Date },
     endTime: { type: Date },

@@ -10,6 +10,7 @@ const setMeetingBody = (meeting) => {
     participants: meeting.participants,
     title: meeting.title,
     description: meeting.description,
+    importance: meeting.importance,
     date: meeting.date,
     startTime: meeting.startTime,
     endTime: meeting.endTime,
@@ -71,14 +72,7 @@ class MeetingsService {
     try {
       const meeting = await Meeting.findById(id);
 
-      if (meeting.userId == userId) {
-        await meeting.deleteOne();
-      } else {
-        return {
-          status: '403',
-          body: 'You have not access to delete this meeting',
-        };
-      }
+      await meeting.deleteOne();
 
       return { status: '200', body: 'Meeting has been deleted' };
     } catch (err) {
