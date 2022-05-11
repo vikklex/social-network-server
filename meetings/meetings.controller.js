@@ -11,6 +11,11 @@ class MeetingsController {
     res.status(result.status).send(result.body);
   };
 
+  updateMeeting = async (req, res) => {
+    const result = await meetingsService.updateMeeting(req.params.id, req.body);
+    res.status(result.status).send(result.body);
+  };
+
   deleteMeeting = async (req, res) => {
     const result = await meetingsService.deleteMeeting(
       req.params.id,

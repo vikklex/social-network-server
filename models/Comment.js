@@ -6,11 +6,25 @@ const Comment = new Schema(
     desc: {
       type: String,
     },
-    tag: { type: Object },
-    reply: mongoose.Types.ObjectId,
-    likes: [{ type: mongoose.Types.ObjectId, ref: 'user' }],
-    user: { type: mongoose.Types.ObjectId, ref: 'user' },
-    postId: { type: mongoose.Types.ObjectId, ref: 'Post' },
+
+    userId: {
+      ref: 'User',
+      type: mongoose.Types.ObjectId,
+    },
+
+    userData: {
+      type: Object,
+    },
+
+    postAuthor: {
+      ref: 'User',
+      type: mongoose.Types.ObjectId,
+    },
+
+    postId: {
+      ref: 'Post',
+      type: mongoose.Types.ObjectId,
+    },
   },
   { timestamps: true },
 );

@@ -1,26 +1,38 @@
 const Comment = require('../models/Comment');
-const Post = require('../models/Post');
 const User = require('../models/User');
 
 const NOT_FOUNDED = { status: '404', body: 'Post not founded' };
 const SERVER_ERROR = { status: '500', body: 'Server error' };
 
+const setCommentBody = (comment) => {
+  return {
+    id: comment._id,
+    desc: comment.desc,
+    userId: comment.userId,
+    userData: comment.userData,
+    postAuthor: comment.postAuthor,
+    postId: comment.postId,
+    createdAt: comment.createdAt,
+    updatedAt: comment.updatedAt,
+  };
+};
+
+const setUserBody = (user) => {
+  return {
+    id: user._id,
+    first_name: user.first_name,
+    last_name: user.last_name,
+    avatar: user.avatar,
+  };
+};
+
 class CommentsService {
   async createComment(body) {
-    const newComment = new Comment({
-      user: body.user._id, //?
-      desc: body.desc,
-      tag: body.tag,
-      reply: body.reply,
-    });
-
-    const post = await Post.findById(body.postId);
-
-    await post.updateOne({ $push: { comments: newComment._id } });
+    const newComment = new Comment(body);
 
     try {
-      const savedComment = await newComment.save();
-      return { status: '200', body: savedComment };
+      await newComment.save();
+      return { status: '200', body: setCommentBody(newComment) };
     } catch (err) {
       return SERVER_ERROR;
     }
@@ -28,37 +40,47 @@ class CommentsService {
 
   async getComments(id) {
     try {
-      const post = await Post.findById(id);
-      const comments = await Comment.find({ postId: post._id });
-      return { status: '200', body: { comments } };
+      const comments = await Comment.find({
+        postId: id,
+      });
+
+      for (const comment of comments) {
+        const userData = await User.findById(comment.userId);
+        comment.userData = setUserBody(userData);
+      }
+
+      const result = [];
+      comments.map((comment) => {
+        result.push(setCommentBody(comment));
+      });
+
+      return { status: '200', body: result };
     } catch (err) {
       return SERVER_ERROR;
     }
   }
 
-  async deleteComment(id, userId) {
+  async updateComment(id, body) {
     try {
-      const post = await Post.findById(id);
-      if (post.userId === userId) {
-        await post.deleteOne();
-        return { status: '200', body: 'Post has been deleted' };
+      const comment = await Comment.findById(id);
+
+      if (comment.userId.toString() === body.userId) {
+        await comment.updateOne({ $set: body });
+        return { status: '200', body: 'Comment has been updated' };
       } else {
-        return { status: '403', body: 'You can delete only your post!' };
+        return { status: '403', body: 'You can update only your comment!' };
       }
     } catch (err) {
       return SERVER_ERROR;
     }
   }
 
-  async updatePost(id, body) {
+  async deleteComment(id) {
     try {
-      const post = await Post.findById(id);
-      if (post.userId === body.userId) {
-        await post.updateOne({ $set: body });
-        return { status: '200', body: 'Post has been updated' };
-      } else {
-        return { status: '403', body: 'You can update only your post!' };
-      }
+      const comment = await Comment.findById(id);
+
+      await comment.deleteOne();
+      return { status: '200', body: 'Comment has been deleted' };
     } catch (err) {
       return SERVER_ERROR;
     }

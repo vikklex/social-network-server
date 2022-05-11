@@ -6,7 +6,8 @@ const router = new Router();
 
 router
   .post('/', authMiddleware, meetingsController.createMeeting)
-  .get('/:id', authMiddleware, meetingsController.getAllUserMeetings)
+  .get('/:id', /*authMiddleware*/ meetingsController.getAllUserMeetings)
+  .put('/:id', authMiddleware, meetingsController.updateMeeting)
   .delete('/:id', meetingsController.deleteMeeting);
 
 module.exports = router;

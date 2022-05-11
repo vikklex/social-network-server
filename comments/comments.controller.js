@@ -15,6 +15,14 @@ class CommentsController {
     const result = await commentsService.updateComment(req.params.id, req.body);
     res.status(result.status).send(result.body);
   };
+
+  deleteComment = async (req, res) => {
+    const result = await commentsService.deleteComment(
+      req.params.id,
+      req.body.userId,
+    );
+    res.status(result.status).send(result.body);
+  };
 }
 
 const commentsController = new CommentsController();

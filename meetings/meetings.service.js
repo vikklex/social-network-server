@@ -68,7 +68,21 @@ class MeetingsService {
     }
   }
 
-  async deleteMeeting(id, userId) {
+  async updateMeeting(id, body) {
+    try {
+      await Meeting.findByIdAndUpdate(id, {
+        $set: body,
+      });
+
+      const meeting = await Meeting.findById(id);
+
+      return { status: '200', body: setMeetingBody(meeting) };
+    } catch (err) {
+      return SERVER_ERROR;
+    }
+  }
+
+  async deleteMeeting(id) {
     try {
       const meeting = await Meeting.findById(id);
 
