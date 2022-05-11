@@ -7,6 +7,7 @@ const setReactionBody = (reaction) => {
   return {
     id: reaction._id,
     reactionType: reaction.reactionType,
+    contentType: reaction.contentType,
     userId: reaction.userId,
     likedUser: reaction.likedUser,
     postId: reaction.postId,
@@ -20,6 +21,7 @@ const getReactionData = (user, reaction) => {
     id: reaction.id,
     userId: reaction.userId,
     reactionType: reaction.reactionType,
+    contentType: reaction.contentType,
     postId: reaction.postId,
     createdAt: reaction.createdAt,
     updatedAt: reaction.updatedAt,
@@ -101,6 +103,7 @@ class ReactionsService {
   async getAllReactionsForUser(id) {
     try {
       const reactions = await Reaction.find({
+        contentType: { $exists: false },
         likedUser: id,
       });
 

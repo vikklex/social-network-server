@@ -7,6 +7,12 @@ const Reaction = new Schema(
       type: String,
       enum: ['like', 'dislike'],
     },
+
+    contentType: {
+      type: String,
+      enum: ['post', 'comment'],
+    },
+
     userId: {
       ref: 'User',
       type: mongoose.Types.ObjectId,
