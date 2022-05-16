@@ -24,10 +24,11 @@ router
     usersController.uploadAlbum,
   )
   .delete('/:id', authMiddleware, usersController.deleteUser)
+  .delete('/:id/user-avatar', authMiddleware, usersController.deleteAvatar)
   .delete(
-    '/:id/user-avatar',
-    filesMiddleware.single('avatar'),
-
-    usersController.deleteAvatar,
+    '/:id/album-image',
+    authMiddleware,
+    usersController.deleteImageFromAlbum,
   );
+
 module.exports = router;

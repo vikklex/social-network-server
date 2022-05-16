@@ -29,6 +29,8 @@ const setUserBody = (user) => {
   };
 };
 
+const makeFilePath = (path) => `/public/${path}`;
+
 class UsersService {
   async getUser(id) {
     try {
@@ -98,33 +100,27 @@ class UsersService {
 
   async uploadAvatar(req) {
     try {
-      const url = req.protocol + '://' + req.get('host');
-
-      const avatar = url + '/public/' + req.file.filename;
+      const path = makeFilePath(req.file.filename);
 
       await User.findByIdAndUpdate(req.params.id, {
-        'avatar': avatar,
+        'avatar': path,
       });
 
-      return { status: '200', body: { avatar } };
+      return { status: '200', body: { avatar: path } };
     } catch (err) {
       return NOT_FOUNDED;
     }
   }
 
-  async deleteAvatar(req) {
+  async deleteAvatar(id) {
     try {
-      const fs = require('fs');
-      const user = await User.findById(req.params.id);
+      const user = await User.findById(id);
 
-      fs.unlink('public' + '/1651825096005-dobby.jpeg', (err) => {
-        if (err) console.log(err);
-        else {
-          console.log('file deleted');
-        }
-      });
+      user.avatar = '';
+
       const savedUser = await user.save();
-      return { status: '200', body: { savedUser } };
+
+      return { status: '200', body: setUserBody(savedUser) };
     } catch (err) {
       return SERVER_ERROR;
     }
@@ -132,12 +128,10 @@ class UsersService {
 
   async uploadAlbum(req) {
     const user = await User.findById(req.params.id);
-    const url = req.protocol + '://' + req.get('host');
     let album = user.album;
 
     req.files.map((file) => {
-      const uploadFile = url + '/public/' + file.filename;
-      album.push(uploadFile);
+      album.push(makeFilePath(file.filename));
     });
 
     try {
@@ -145,6 +139,24 @@ class UsersService {
         'album': album,
       });
       return { status: '200', body: { album } };
+    } catch (err) {
+      return SERVER_ERROR;
+    }
+  }
+
+  async deleteImageFromAlbum(id, path) {
+    try {
+      const user = await User.findById(id);
+
+      const index = user.album.indexOf(path);
+
+      if (index !== -1) {
+        user.album.splice(index, 1);
+      }
+
+      const savedUser = await user.save();
+
+      return { status: '200', body: setUserBody(savedUser) };
     } catch (err) {
       return SERVER_ERROR;
     }

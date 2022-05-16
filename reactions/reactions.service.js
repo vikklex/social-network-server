@@ -144,6 +144,24 @@ class ReactionsService {
       return SERVER_ERROR;
     }
   }
+
+  async getReactionsFromDate(id, startDate, endDate) {
+    try {
+      const reactions = await Reaction.find({
+        userId: id,
+        createdAt: { $gte: startDate, $lte: endDate },
+      });
+
+      const result = [];
+      reactions.map((reaction) => {
+        result.push(setReactionBody(reaction));
+      });
+
+      return { status: '200', body: result };
+    } catch (err) {
+      return SERVER_ERROR;
+    }
+  }
 }
 const reactionsService = new ReactionsService();
 

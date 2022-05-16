@@ -23,12 +23,20 @@ class UsersController {
   };
 
   deleteAvatar = async (req, res) => {
-    const result = await usersService.deleteAvatar(req);
+    const result = await usersService.deleteAvatar(req.params.id);
     res.status(result.status).send(result.body);
   };
 
   uploadAlbum = async (req, res) => {
     const result = await usersService.uploadAlbum(req);
+    res.status(result.status).send(result.body);
+  };
+
+  deleteImageFromAlbum = async (req, res) => {
+    const result = await usersService.deleteImageFromAlbum(
+      req.params.id,
+      req.body.path,
+    );
     res.status(result.status).send(result.body);
   };
 

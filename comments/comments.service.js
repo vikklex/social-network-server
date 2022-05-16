@@ -54,6 +54,7 @@ class CommentsService {
         result.push(setCommentBody(comment));
       });
 
+      result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       return { status: '200', body: result };
     } catch (err) {
       return SERVER_ERROR;
