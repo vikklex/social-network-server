@@ -1,7 +1,6 @@
 const Comment = require('../models/Comment');
 const User = require('../models/User');
 
-const NOT_FOUNDED = { status: '404', body: 'Post not founded' };
 const SERVER_ERROR = { status: '500', body: 'Server error' };
 
 const setCommentBody = (comment) => {

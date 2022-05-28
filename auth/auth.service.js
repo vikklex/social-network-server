@@ -79,7 +79,10 @@ class AuthService {
       const isPassValid = bcrypt.compareSync(password, user.password_hash);
 
       if (!isPassValid) {
-        return { status: '400', body: 'You are input non-correct password' };
+        return {
+          status: '400',
+          body: 'You are input non-correct email or password',
+        };
       }
 
       const access_token = createAccessToken({ id: user._id });
@@ -117,7 +120,10 @@ class AuthService {
       const isPassValid = bcrypt.compareSync(password, user.password_hash);
 
       if (!isPassValid) {
-        return { status: '400', body: 'You are input non-correct password' };
+        return {
+          status: '400',
+          body: 'You are input non-correct email or password',
+        };
       }
 
       const access_token = createAccessToken({ id: user._id });

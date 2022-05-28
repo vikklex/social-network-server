@@ -1,5 +1,9 @@
 const bcrypt = require('bcryptjs');
+const Meeting = require('../models/Meeting');
 const User = require('../models/User');
+const Post = require('../models/Post');
+const Reaction = require('../models/Reaction');
+const Comment = require('../models/Comment');
 
 const NOT_FOUNDED = { status: '404', body: 'User not founded' };
 const SERVER_ERROR = { status: '500', body: 'Server error' };
@@ -35,40 +39,10 @@ class UsersService {
   async getUser(id) {
     try {
       const user = await User.findById(id);
-      const followings = [];
-      const followers = [];
-
-      for (const followingId of user.followings) {
-        await User.findById(followingId).then((user) =>
-          followings.push(setUserBody(user)),
-        );
-      }
-
-      for (const followerId of user.followers) {
-        await User.findById(followerId).then((user) =>
-          followers.push(setUserBody(user)),
-        );
-      }
-
-      user.followings = followings;
-      user.followers = followers;
 
       return { status: '200', body: setUserBody(user) };
     } catch (err) {
       return NOT_FOUNDED;
-    }
-  }
-
-  async deleteUser(id, body) {
-    if (body.userId === id || body.isAdmin) {
-      try {
-        await User.findByIdAndDelete(id);
-        return { status: '200', body: 'Account has been deleted' };
-      } catch (err) {
-        return NOT_FOUNDED;
-      }
-    } else {
-      return { status: '403', body: 'You can delete only your account!' };
     }
   }
 
@@ -231,6 +205,25 @@ class UsersService {
       return { status: '200', body: result };
     } catch (error) {
       return SERVER_ERROR;
+    }
+  }
+
+  async deleteUser(id) {
+    try {
+      await Post.deleteMany({ userId: id });
+      await Comment.deleteMany({ userId: id });
+      await Reaction.deleteMany({ userId: id });
+      await Reaction.deleteMany({ likedUser: id });
+      await Meeting.deleteMany({ userId: id });
+      await Meeting.updateMany({ $pull: { participants: id } });
+      await User.updateMany({ $pull: { followers: id } });
+      await User.updateMany({ $pull: { followings: id } });
+
+      await User.findByIdAndDelete(id);
+
+      return { status: '200', body: 'Account has been deleted' };
+    } catch (err) {
+      return NOT_FOUNDED;
     }
   }
 }
