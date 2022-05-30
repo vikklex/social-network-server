@@ -26,7 +26,7 @@ class AuthController {
         maxAge: AGE,
       });
 
-    res.status(result.status).send({ msg: result.body });
+    res.status(result.status).send(result.body);
   };
 
   loginUser = async (req, res) => {
@@ -35,29 +35,7 @@ class AuthController {
       req.body.password_hash,
     );
 
-    const { refresh_token } = result.body;
-
-    refresh_token &&
-      res.cookie('refreshtoken', refresh_token, {
-        httpOnly: true,
-        path: '/v1/auth/refresh_token',
-        maxAge: AGE,
-      });
     res.status(result.status).send({ msg: result.body });
-  };
-
-  logoutUser = async (req, res) => {
-    const result = await authService.logoutUser();
-    res.clearCookie('refreshtoken', { path: '/v1/auth/refresh_token' });
-    res.status(result.status).send(result.body);
-  };
-
-  authUser = async (req, res) => {
-    const result = await authService.authUser(
-      req.body.email,
-      req.body.password_hash,
-    );
-    res.status(result.status).send(result.body);
   };
 
   generateAccessToken = async (req, res) => {

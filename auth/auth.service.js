@@ -56,13 +56,12 @@ class AuthService {
       });
 
       const access_token = createAccessToken({ id: newUser._id });
-      const refresh_token = createRefreshToken({ id: newUser._id });
 
       const user = await newUser.save();
 
       return {
         status: '200',
-        body: { access_token, user: setUserBody(user), refresh_token },
+        body: { access_token, user: setUserBody(user) },
       };
     } catch (err) {
       return NOT_FOUNDED;
@@ -96,14 +95,6 @@ class AuthService {
           refresh_token,
         },
       };
-    } catch (err) {
-      return { status: '500', body: 'Server error' };
-    }
-  }
-
-  async logoutUser() {
-    try {
-      return { status: '200', body: 'Logged out' };
     } catch (err) {
       return { status: '500', body: 'Server error' };
     }

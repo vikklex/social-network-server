@@ -11,11 +11,6 @@ class PostsController {
     res.status(result.status).send(result.body);
   };
 
-  getAllUserPosts = async (req, res) => {
-    const result = await postsService.getAllUserPosts(req.params.first_name);
-    res.status(result.status).send(result.body);
-  };
-
   getAllFriendsPosts = async (req, res) => {
     const result = await postsService.getAllFriendsPosts(req.params.id);
     res.status(result.status).send(result.body);
@@ -42,10 +37,8 @@ class PostsController {
   };
 
   deletePost = async (req, res) => {
-    const result = await postsService.deletePost(
-      req.params.id,
-      req.body.userId,
-    );
+    console.log(req.body);
+    const result = await postsService.deletePost(req.params.id, req.body.user);
     res.status(result.status).send(result.body);
   };
 }

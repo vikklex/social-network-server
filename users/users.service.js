@@ -74,15 +74,16 @@ class UsersService {
 
   async uploadAvatar(req) {
     try {
-      const path = makeFilePath(req.file.filename);
+      const path = req.file ? makeFilePath(req.file?.filename) : '';
 
-      await User.findByIdAndUpdate(req.params.id, {
+      const user = await User.findByIdAndUpdate(req.params.id, {
         'avatar': path,
       });
 
-      return { status: '200', body: { avatar: path } };
+      return { status: '200', body: setUserBody(user) };
     } catch (err) {
-      return NOT_FOUNDED;
+      console.log(err);
+      return SERVER_ERROR;
     }
   }
 
@@ -109,10 +110,10 @@ class UsersService {
     });
 
     try {
-      await User.findByIdAndUpdate(req.params.id, {
+      const user = await User.findByIdAndUpdate(req.params.id, {
         'album': album,
       });
-      return { status: '200', body: { album } };
+      return { status: '200', body: setUserBody(user) };
     } catch (err) {
       return SERVER_ERROR;
     }
@@ -208,6 +209,23 @@ class UsersService {
     }
   }
 
+  async getUsersFromRegisterDate(startDate, endDate) {
+    try {
+      const users = await User.find({
+        createdAt: { $gte: startDate, $lte: endDate },
+      });
+
+      const result = [];
+      users.map((reaction) => {
+        result.push(setUserBody(reaction));
+      });
+
+      return { status: '200', body: result };
+    } catch (err) {
+      return SERVER_ERROR;
+    }
+  }
+
   async deleteUser(id) {
     try {
       await Post.deleteMany({ userId: id });
@@ -221,7 +239,7 @@ class UsersService {
 
       await User.findByIdAndDelete(id);
 
-      return { status: '200', body: 'Account has been deleted' };
+      return { status: '200', body: { user: null } };
     } catch (err) {
       return NOT_FOUNDED;
     }

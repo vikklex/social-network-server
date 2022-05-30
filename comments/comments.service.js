@@ -31,6 +31,7 @@ class CommentsService {
 
     try {
       await newComment.save();
+
       return { status: '200', body: setCommentBody(newComment) };
     } catch (err) {
       return SERVER_ERROR;
@@ -61,6 +62,7 @@ class CommentsService {
   }
 
   async updateComment(id, body) {
+    console.log(body);
     try {
       const comment = await Comment.findById(id);
 
@@ -80,7 +82,7 @@ class CommentsService {
       const comment = await Comment.findById(id);
 
       await comment.deleteOne();
-      return { status: '200', body: 'Comment has been deleted' };
+      return { status: '200', body: { id: id } };
     } catch (err) {
       return SERVER_ERROR;
     }

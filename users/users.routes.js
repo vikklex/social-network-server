@@ -6,7 +6,12 @@ const filesMiddleware = require('./../middleware/files.middleware');
 const router = new Router();
 
 router
-  .get('/:id', /*authMiddleware,*/ usersController.getUser)
+  .get('/:id', authMiddleware, usersController.getUser)
+  .get(
+    '/:id/date-statistics',
+    authMiddleware,
+    usersController.getUsersFromRegisterDate,
+  )
   .put('/search/search', authMiddleware, usersController.searchUser)
   .put('/:id', authMiddleware, usersController.updateUser)
   .put('/:id/follow', usersController.followUser)

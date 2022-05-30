@@ -45,22 +45,19 @@ class PostsService {
 
   async getPost(id) {
     try {
-      const post = await Post.findById(id);
+      const posts = await Post.findById(id);
+
+      const post = [];
+
+      posts.forEach((p) => {
+        post.push(setPostBody(p));
+      });
+
+      post.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
       return { status: '200', body: setPostBody(post) };
     } catch (err) {
       return SERVER_ERROR;
-    }
-  }
-
-  async getAllUserPosts(first_name) {
-    try {
-      const user = await User.findOne({ first_name });
-      const posts = await Post.find({ userId: user._id });
-
-      return { status: '200', body: posts };
-    } catch (err) {
-      return NOT_FOUNDED;
     }
   }
 
@@ -106,13 +103,11 @@ class PostsService {
   async updatePost(id, body) {
     try {
       const post = await Post.findById(id);
-      if (post.userId === body.userId) {
-        await post.updateOne({ $set: body });
 
-        return { status: '200', body: 'Post has been updated' };
-      } else {
-        return { status: '403', body: 'You can update only your post!' };
-      }
+      await post.updateOne({ $set: body });
+      const newPost = await Post.findById(id);
+
+      return { status: '200', body: setPostBody(newPost) };
     } catch (err) {
       return SERVER_ERROR;
     }
@@ -128,11 +123,13 @@ class PostsService {
     });
 
     try {
-      await Post.findByIdAndUpdate(req.params.id, {
+      const post = await Post.findByIdAndUpdate(req.params.id, {
         'img': image,
       });
 
-      return { status: '200', body: { image } };
+      const newPost = await Post.findById(req.params.id);
+
+      return { status: '200', body: setPostBody(newPost) };
     } catch (err) {
       return SERVER_ERROR;
     }
@@ -155,12 +152,15 @@ class PostsService {
     }
   }
 
-  async deletePost(id) {
+  async deletePost(id, user) {
     try {
       const post = await Post.findById(id);
-      await post.deleteOne();
-
-      return { status: '200', body: 'Post has been deleted' };
+      if (post.userId === user.id || user.is_admin) {
+        await post.deleteOne();
+        return { status: '200', body: { id: id } };
+      } else {
+        return { status: '403', body: 'You can delete only your post!' };
+      }
     } catch (err) {
       return SERVER_ERROR;
     }

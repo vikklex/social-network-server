@@ -88,7 +88,7 @@ class MeetingsService {
 
       await meeting.deleteOne();
 
-      return { status: '200', body: 'Meeting has been deleted' };
+      return { status: '200', body: { id: id } };
     } catch (err) {
       return SERVER_ERROR;
     }

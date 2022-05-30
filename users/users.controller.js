@@ -35,7 +35,7 @@ class UsersController {
   deleteImageFromAlbum = async (req, res) => {
     const result = await usersService.deleteImageFromAlbum(
       req.params.id,
-      req.body.path,
+      req.body.data,
     );
     res.status(result.status).send(result.body);
   };
@@ -74,6 +74,11 @@ class UsersController {
 
   searchUser = async (req, res) => {
     const result = await usersService.searchUser(req);
+    res.status(result.status).send(result.body);
+  };
+
+  getUsersFromRegisterDate = async (req, res) => {
+    const result = await usersService.getUsersFromRegisterDate(req);
     res.status(result.status).send(result.body);
   };
 }
