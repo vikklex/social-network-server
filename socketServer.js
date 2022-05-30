@@ -14,11 +14,11 @@ const socketServer = (socket) => {
 
     const client = users.filter((user) => id === user.id);
 
-    console.log(users, id);
+    //console.log(users, id);
   });
 
   socket.on('dislike', (post) => {
-    console.log({ post });
+    //console.log({ post });
   });
 };
 

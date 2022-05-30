@@ -62,7 +62,6 @@ class CommentsService {
   }
 
   async updateComment(id, body) {
-    console.log(body);
     try {
       const comment = await Comment.findById(id);
 

@@ -37,7 +37,6 @@ class PostsController {
   };
 
   deletePost = async (req, res) => {
-    console.log(req.body);
     const result = await postsService.deletePost(req.params.id, req.body.user);
     res.status(result.status).send(result.body);
   };

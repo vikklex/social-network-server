@@ -7,8 +7,9 @@ const router = new Router();
 
 router
   .get('/:id', authMiddleware, usersController.getUser)
-  .get(
-    '/:id/date-statistics',
+  .post('/:id/all', /*authMiddleware,*/ usersController.getAllUsers)
+  .post(
+    '/date-statistics',
     authMiddleware,
     usersController.getUsersFromRegisterDate,
   )

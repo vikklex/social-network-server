@@ -46,6 +46,25 @@ class UsersService {
     }
   }
 
+  async getAllUsers() {
+    try {
+      const filter = {};
+      const users = await User.find(filter);
+      console.log(users);
+
+      const userData = [];
+
+      users.forEach((user) => {
+        userData.push(setUserBody(user));
+      });
+
+      return { status: '200', body: userData };
+    } catch (err) {
+      console.log(err);
+      //return NOT_FOUNDED;
+    }
+  }
+
   async updateUser(id, body) {
     if (body.userId === id || body.isAdmin) {
       if (body.password_hash) {
@@ -82,7 +101,6 @@ class UsersService {
 
       return { status: '200', body: setUserBody(user) };
     } catch (err) {
-      console.log(err);
       return SERVER_ERROR;
     }
   }

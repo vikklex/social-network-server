@@ -3,12 +3,13 @@ const usersService = require('./users.service');
 class UsersController {
   getUser = async (req, res) => {
     const result = await usersService.getUser(req.params.id);
-
     res.status(result.status).send({ user: result.body });
   };
 
-  deleteUser = async (req, res) => {
-    const result = await usersService.deleteUser(req.params.id, req.body);
+  getAllUsers = async (req, res) => {
+    console.log('jjsjj');
+    const result = await usersService.getAllUsers();
+    console.log(result);
     res.status(result.status).send(result.body);
   };
 
@@ -78,7 +79,15 @@ class UsersController {
   };
 
   getUsersFromRegisterDate = async (req, res) => {
-    const result = await usersService.getUsersFromRegisterDate(req);
+    const result = await usersService.getUsersFromRegisterDate(
+      req.body.startDate,
+      req.body.endDate,
+    );
+    res.status(result.status).send(result.body);
+  };
+
+  deleteUser = async (req, res) => {
+    const result = await usersService.deleteUser(req.params.id, req.body);
     res.status(result.status).send(result.body);
   };
 }
