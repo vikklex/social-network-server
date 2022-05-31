@@ -7,7 +7,7 @@ const router = new Router();
 
 router
   .get('/:id', authMiddleware, usersController.getUser)
-  .post('/:id/all', /*authMiddleware,*/ usersController.getAllUsers)
+  .post('/:id/all', authMiddleware, usersController.getAllUsers)
   .post(
     '/date-statistics',
     authMiddleware,
@@ -15,6 +15,7 @@ router
   )
   .put('/search/search', authMiddleware, usersController.searchUser)
   .put('/:id', authMiddleware, usersController.updateUser)
+  .put('/:id/block-user', authMiddleware, usersController.blockUser)
   .put('/:id/follow', usersController.followUser)
   .put('/:id/unfollow', usersController.unfollowUser)
   .put(

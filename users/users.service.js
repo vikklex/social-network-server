@@ -21,6 +21,7 @@ const setUserBody = (user) => {
     followers: user.followers,
     followings: user.followings,
     is_admin: user.is_admin,
+    is_blocked: user.is_blocked,
     desc: user.desc,
     city: user.city,
     from: user.from,
@@ -30,6 +31,7 @@ const setUserBody = (user) => {
     posts_visibility: user.posts_visibility,
     friends_visibility: user.friends_visibility,
     album_visibility: user.album_visibility,
+    createdAt: user.createdAt,
   };
 };
 
@@ -50,7 +52,6 @@ class UsersService {
     try {
       const filter = {};
       const users = await User.find(filter);
-      console.log(users);
 
       const userData = [];
 
@@ -60,8 +61,7 @@ class UsersService {
 
       return { status: '200', body: userData };
     } catch (err) {
-      console.log(err);
-      //return NOT_FOUNDED;
+      return NOT_FOUNDED;
     }
   }
 
@@ -84,6 +84,28 @@ class UsersService {
 
         return { status: '200', body: setUserBody(user) };
       } catch (err) {
+        return NOT_FOUNDED;
+      }
+    } else {
+      return SERVER_ERROR;
+    }
+  }
+
+  async blockUser(id, body) {
+    console.log(id, body.user);
+    if (body.user.is_admin) {
+      try {
+        const user = await User.findByIdAndUpdate(id);
+
+        await user.updateOne({
+          'is_blocked': !user.is_blocked,
+        });
+
+        const newUser = await User.findById(id);
+
+        return { status: '200', body: setUserBody(newUser) };
+      } catch (err) {
+        console.log(err);
         return NOT_FOUNDED;
       }
     } else {
@@ -209,7 +231,7 @@ class UsersService {
         ],
       })
         .limit(10)
-        .select('first_name last_name avatar');
+        .select('first_name last_name avatar is_admin');
 
       let result = [];
 

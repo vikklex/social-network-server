@@ -7,15 +7,19 @@ class UsersController {
   };
 
   getAllUsers = async (req, res) => {
-    console.log('jjsjj');
     const result = await usersService.getAllUsers();
-    console.log(result);
+
     res.status(result.status).send(result.body);
   };
 
   updateUser = async (req, res) => {
     const result = await usersService.updateUser(req.params.id, req.body);
     res.status(result.status).send({ msg: result.body });
+  };
+
+  blockUser = async (req, res) => {
+    const result = await usersService.blockUser(req.params.id, req.body);
+    res.status(result.status).send(result.body);
   };
 
   uploadAvatar = async (req, res) => {

@@ -14,6 +14,7 @@ const User = new Schema(
     followings: { type: Array, default: [] },
     followers: { type: Array, default: [] },
     is_admin: { type: Boolean, default: false },
+    is_blocked: { type: Boolean, default: false },
     desc: { type: String, max: 150 },
     city: { type: String, max: 50 },
     from: { type: String, max: 50 },
