@@ -5,9 +5,12 @@ const authMiddleware = require('../middleware/auth.middleware');
 const router = new Router();
 
 router
+  .get('/:id', authMiddleware, meetingsController.getAllUserMeetings)
+
   .post('/', authMiddleware, meetingsController.createMeeting)
-  .get('/:id', /*authMiddleware*/ meetingsController.getAllUserMeetings)
+
   .put('/:id', authMiddleware, meetingsController.updateMeeting)
+
   .delete('/:id', meetingsController.deleteMeeting);
 
 module.exports = router;

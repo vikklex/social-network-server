@@ -6,16 +6,17 @@ const filesMiddleware = require('./../middleware/files.middleware');
 const router = new Router();
 
 router
+  .get('/:id', authMiddleware, postsController.getPost)
+  .get('/timeline/:userId', authMiddleware, postsController.getAllPosts)
+  .get('/friendsPosts/:id', authMiddleware, postsController.getAllFriendsPosts)
+
   .post(
     '/',
     authMiddleware,
     filesMiddleware.single('img'),
     postsController.createPost,
   )
-  .get('/:id', authMiddleware, postsController.getPost)
 
-  .get('/timeline/:userId', authMiddleware, postsController.getAllPosts)
-  .get('/friendsPosts/:id', authMiddleware, postsController.getAllFriendsPosts)
   .put('/:id', authMiddleware, postsController.updatePost)
   .put('/:id/like', authMiddleware, postsController.likePost)
   .put(
@@ -24,6 +25,7 @@ router
     filesMiddleware.array('img', 8),
     postsController.uploadImage,
   )
+
   .delete('/:id', authMiddleware, postsController.deletePost);
 
 module.exports = router;

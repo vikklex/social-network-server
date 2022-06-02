@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
-const Meeting = require('../models/Meeting');
+
 const User = require('../models/User');
+const Meeting = require('../models/Meeting');
 const Post = require('../models/Post');
 const Reaction = require('../models/Reaction');
 const Comment = require('../models/Comment');
@@ -51,6 +52,7 @@ class UsersService {
   async getAllUsers() {
     try {
       const filter = {};
+
       const users = await User.find(filter);
 
       const userData = [];
@@ -70,11 +72,13 @@ class UsersService {
       if (body.password_hash) {
         try {
           const salt = await bcrypt.genSalt(10);
+
           body.password_hash = await bcrypt.hash(body.password_hash, salt);
         } catch (err) {
           return SERVER_ERROR;
         }
       }
+
       try {
         await User.findByIdAndUpdate(id, {
           $set: body,
@@ -92,7 +96,6 @@ class UsersService {
   }
 
   async blockUser(id, body) {
-    console.log(id, body.user);
     if (body.user.is_admin) {
       try {
         const user = await User.findByIdAndUpdate(id);
@@ -105,8 +108,7 @@ class UsersService {
 
         return { status: '200', body: setUserBody(newUser) };
       } catch (err) {
-        console.log(err);
-        return NOT_FOUNDED;
+        return SERVER_ERROR;
       }
     } else {
       return SERVER_ERROR;
@@ -153,6 +155,7 @@ class UsersService {
       const user = await User.findByIdAndUpdate(req.params.id, {
         'album': album,
       });
+
       return { status: '200', body: setUserBody(user) };
     } catch (err) {
       return SERVER_ERROR;
@@ -181,13 +184,16 @@ class UsersService {
     if (userId !== id) {
       try {
         const user = await User.findById(id);
+
         const currentUser = await User.findById(userId);
 
         if (!user.followings.includes(userId)) {
           await user.updateOne({ $push: { followings: userId } });
+
           await currentUser.updateOne({
             $push: { followers: id },
           });
+
           return { status: '200', body: 'User has been followed' };
         } else {
           return { status: '403', body: 'You are follow already' };
@@ -204,11 +210,14 @@ class UsersService {
     if (userId !== id) {
       try {
         const user = await User.findById(id);
+
         const currentUser = await User.findById(userId);
 
         if (user.followings.includes(userId)) {
           await user.updateOne({ $pull: { followings: userId } });
+
           await currentUser.updateOne({ $pull: { followers: id } });
+
           return { status: '200', body: 'User has been unfollow' };
         } else {
           return { status: '403', body: 'You are unfollow already' };
@@ -224,6 +233,7 @@ class UsersService {
   async searchUser(req) {
     try {
       const regex = new RegExp(req.query.username, 'i');
+
       const users = await User.find({
         '$or': [
           { 'first_name': { '$regex': regex } },
@@ -285,6 +295,7 @@ class UsersService {
     }
   }
 }
+
 const usersService = new UsersService();
 
 module.exports = usersService;

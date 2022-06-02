@@ -9,4 +9,5 @@ const Post = new Schema(
   },
   { timestamps: true },
 );
+
 module.exports = model('Post', Post);

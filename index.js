@@ -15,7 +15,6 @@ const postsRouter = require('./posts/posts.routes');
 const reactionsRouter = require('./reactions/reactions.routes');
 const commentsRouter = require('./comments/comments.routes');
 const meetingsRouter = require('./meetings/meetings.routes');
-const socketServer = require('./socketServer');
 
 app.use(corsMiddleware);
 app.use(express.json());
@@ -31,17 +30,10 @@ app.use('/v1/reactions', reactionsRouter);
 app.use('/v1/comments', commentsRouter);
 app.use('/v1/meetings', meetingsRouter);
 
-const http = require('http').createServer(app);
-const io = require('socket.io')(http);
-
-io.on('connection', (socket) => {
-  socketServer(socket);
-});
-
 const start = async () => {
   try {
     await mongoose.connect(config.get('dbURL'), {});
-    http.listen(PORT, () => {
+    app.listen(PORT, () => {
       console.log('server started on port', PORT);
     });
   } catch (e) {

@@ -1,10 +1,6 @@
 const { validationResult } = require('express-validator');
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
 
 const authService = require('./auth.service');
-
-const AGE = 24 * 30 * 60 * 60 * 1000;
 
 class AuthController {
   createUser = async (req, res) => {
@@ -18,14 +14,6 @@ class AuthController {
       req.body.password_hash,
     );
 
-    const { refresh_token } = result.body;
-    refresh_token &&
-      res.cookie('refreshtoken', refresh_token, {
-        httpOnly: true,
-        path: '/v1/auth/refresh_token',
-        maxAge: AGE,
-      });
-
     res.status(result.status).send(result.body);
   };
 
@@ -37,51 +25,8 @@ class AuthController {
 
     res.status(result.status).send({ msg: result.body });
   };
-
-  generateAccessToken = async (req, res) => {
-    try {
-      const rf_token = req.cookies.refreshtoken;
-
-      if (!rf_token) {
-        return res.status(400).json({ msg: 'login now' });
-      }
-
-      jwt.verify(
-        rf_token,
-        config.get('secretRefreshKey'),
-        async (err, result) => {
-          if (err) {
-            return res.status(400).json({ msg: 'login now' });
-          }
-
-          const user = await User.findById(result.id);
-
-          if (!user) {
-            return res.status(400).json({ msg: 'no user' });
-          }
-
-          const access_token = createAccessToken({ id: result.id });
-
-          res.json({
-            status: '200',
-            body: {
-              access_token,
-              user,
-            },
-          });
-        },
-      );
-    } catch (error) {
-      return res.status(500).json({ msg: 'server err' });
-    }
-  };
 }
 
-const createAccessToken = (payload) => {
-  return jwt.sign(payload, config.get('secretKey'), {
-    'expiresIn': '3d',
-  });
-};
 const authController = new AuthController();
 
 module.exports = authController;

@@ -34,6 +34,7 @@ const getPostData = (user, post) => {
 class PostsService {
   async createPost(body) {
     const newPost = new Post(body);
+
     try {
       const savedPost = await newPost.save();
 
@@ -64,12 +65,15 @@ class PostsService {
   async getAllPosts(id) {
     try {
       const currentUser = await User.findById(id);
+
       const posts = await Post.find({ userId: currentUser._id });
+
       const post = [];
 
       posts.forEach((p) => {
         post.push(setPostBody(p));
       });
+
       post.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
       return { status: '200', body: post };
@@ -81,6 +85,7 @@ class PostsService {
   async getAllFriendsPosts(id) {
     try {
       const currentUser = await User.findById(id);
+
       const result = [];
 
       for (const friendId of currentUser.followings) {
@@ -92,6 +97,7 @@ class PostsService {
           });
         });
       }
+
       result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
       return { status: '200', body: result };
@@ -104,10 +110,15 @@ class PostsService {
     try {
       const post = await Post.findById(id);
 
-      await post.updateOne({ $set: body });
-      const newPost = await Post.findById(id);
+      if (post.userId === body.userId || body.profile.is_admin) {
+        await post.updateOne({ $set: body });
 
-      return { status: '200', body: setPostBody(newPost) };
+        const newPost = await Post.findById(id);
+
+        return { status: '200', body: setPostBody(newPost) };
+      } else {
+        return { status: '403', body: 'You can update only your post!' };
+      }
     } catch (err) {
       return SERVER_ERROR;
     }
@@ -115,6 +126,7 @@ class PostsService {
 
   async uploadImage(req) {
     const url = req.protocol + '://' + req.get('host');
+
     const image = [];
 
     req.files.map((file) => {
@@ -123,7 +135,7 @@ class PostsService {
     });
 
     try {
-      const post = await Post.findByIdAndUpdate(req.params.id, {
+      await Post.findByIdAndUpdate(req.params.id, {
         'img': image,
       });
 
@@ -138,6 +150,7 @@ class PostsService {
   async likePost(id, userId) {
     try {
       const post = await Post.findById(id);
+
       if (!post.likes.includes(userId)) {
         await post.updateOne({ $push: { likes: userId } });
 
@@ -155,8 +168,10 @@ class PostsService {
   async deletePost(id, user) {
     try {
       const post = await Post.findById(id);
+
       if (post.userId === user.id || user.is_admin) {
         await post.deleteOne();
+
         return { status: '200', body: { id: id } };
       } else {
         return { status: '403', body: 'You can delete only your post!' };

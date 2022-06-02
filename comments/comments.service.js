@@ -46,10 +46,12 @@ class CommentsService {
 
       for (const comment of comments) {
         const userData = await User.findById(comment.userId);
+
         comment.userData = setUserBody(userData);
       }
 
       const result = [];
+
       comments.map((comment) => {
         result.push(setCommentBody(comment));
       });
@@ -67,6 +69,7 @@ class CommentsService {
 
       if (comment.userId.toString() === body.userId) {
         await comment.updateOne({ $set: body });
+
         return { status: '200', body: 'Comment has been updated' };
       } else {
         return { status: '403', body: 'You can update only your comment!' };
@@ -81,6 +84,7 @@ class CommentsService {
       const comment = await Comment.findById(id);
 
       await comment.deleteOne();
+
       return { status: '200', body: { id: id } };
     } catch (err) {
       return SERVER_ERROR;

@@ -8,7 +8,6 @@ class UsersController {
 
   getAllUsers = async (req, res) => {
     const result = await usersService.getAllUsers();
-
     res.status(result.status).send(result.body);
   };
 

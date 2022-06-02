@@ -6,12 +6,13 @@ const filesMiddleware = require('./../middleware/files.middleware');
 const router = new Router();
 
 router
+
   .post(
     '/registration',
     filesMiddleware.single('avatar'),
     authController.createUser,
   )
-  .post('/login', authController.loginUser)
-  .post('/refresh_token', authController.generateAccessToken);
+
+  .post('/login', authController.loginUser);
 
 module.exports = router;

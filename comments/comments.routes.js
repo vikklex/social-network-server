@@ -6,10 +6,13 @@ const commentsController = require('./comments.controller');
 const router = new Router();
 
 router
-  .post('/', authMiddleware, commentsController.createComment)
   .get('/timeline/:postId', authMiddleware, commentsController.getComments)
-  .put('/:id', commentsController.updateComment)
-  .delete('/:id', commentsController.deleteComment);
+
+  .post('/', authMiddleware, commentsController.createComment)
+
+  .put('/:id', authMiddleware, commentsController.updateComment)
+
+  .delete('/:id', authMiddleware, commentsController.deleteComment);
 
 module.exports = router;
 

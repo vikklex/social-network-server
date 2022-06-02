@@ -7,17 +7,19 @@ const router = new Router();
 
 router
   .get('/:id', authMiddleware, usersController.getUser)
+
   .post('/:id/all', authMiddleware, usersController.getAllUsers)
   .post(
     '/date-statistics',
     authMiddleware,
     usersController.getUsersFromRegisterDate,
   )
+
   .put('/search/search', authMiddleware, usersController.searchUser)
   .put('/:id', authMiddleware, usersController.updateUser)
   .put('/:id/block-user', authMiddleware, usersController.blockUser)
-  .put('/:id/follow', usersController.followUser)
-  .put('/:id/unfollow', usersController.unfollowUser)
+  .put('/:id/follow', authMiddleware, usersController.followUser)
+  .put('/:id/unfollow', authMiddleware, usersController.unfollowUser)
   .put(
     '/:id/user-profile',
     filesMiddleware.single('avatar'),
@@ -30,6 +32,7 @@ router
     authMiddleware,
     usersController.uploadAlbum,
   )
+
   .delete('/:id', authMiddleware, usersController.deleteUser)
   .delete('/:id/user-avatar', authMiddleware, usersController.deleteAvatar)
   .delete(

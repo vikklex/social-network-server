@@ -31,6 +31,12 @@ const setUserBody = (user) => {
   };
 };
 
+const createAccessToken = (payload) => {
+  return jwt.sign(payload, config.get('secretKey'), {
+    'expiresIn': '3d',
+  });
+};
+
 class AuthService {
   async createUser(validateErrors, first_name, last_name, email, password) {
     try {
@@ -39,6 +45,7 @@ class AuthService {
       }
 
       const candidate = await User.findOne({ email });
+
       if (candidate) {
         return {
           status: '400',
@@ -67,6 +74,7 @@ class AuthService {
       return NOT_FOUNDED;
     }
   }
+
   async loginUser(email, password) {
     try {
       const user = await User.findOne({ email }).populate('password_hash');
@@ -85,85 +93,15 @@ class AuthService {
       }
 
       const access_token = createAccessToken({ id: user._id });
-      const refresh_token = createRefreshToken({ id: user._id });
 
       return {
         status: '200',
         body: {
           access_token,
           user: setUserBody(user),
-          refresh_token,
         },
       };
     } catch (err) {
-      return { status: '500', body: 'Server error' };
-    }
-  }
-
-  async authUser(email, password) {
-    try {
-      const user = await User.findOne({ email });
-
-      if (!user) {
-        return NOT_FOUNDED;
-      }
-
-      const isPassValid = bcrypt.compareSync(password, user.password_hash);
-
-      if (!isPassValid) {
-        return {
-          status: '400',
-          body: 'You are input non-correct email or password',
-        };
-      }
-
-      const access_token = createAccessToken({ id: user._id });
-
-      return {
-        status: '200',
-        body: {
-          access_token,
-          user: {
-            id: user.id,
-            email: user.email,
-          },
-        },
-      };
-    } catch (err) {
-      return { status: '500', body: 'Server error' };
-    }
-  }
-
-  async generateAccessToken(req, res) {
-    try {
-      const rf_token = req.cookies.refresh_token;
-      if (!rf_token) {
-        return { status: '400', body: 'Please, login' };
-      }
-      jwt.verify(
-        rf_token,
-        config.get('secretRefreshKey'),
-        async (err, result) => {
-          if (err) {
-            return { status: '400', body: 'not now' };
-          }
-          const user = await User.findById(result.id);
-
-          if (!user) {
-            return NOT_FOUNDED;
-          }
-          const access_token = createAccessToken({ id: result.id });
-
-          return {
-            status: '200',
-            body: {
-              access_token,
-              user,
-            },
-          };
-        },
-      );
-    } catch (error) {
       return { status: '500', body: 'Server error' };
     }
   }
@@ -171,15 +109,4 @@ class AuthService {
 
 const authService = new AuthService();
 
-const createAccessToken = (payload) => {
-  return jwt.sign(payload, config.get('secretKey'), {
-    'expiresIn': '3d',
-  });
-};
-
-const createRefreshToken = (payload) => {
-  return jwt.sign(payload, config.get('secretRefreshKey'), {
-    'expiresIn': '30d',
-  });
-};
 module.exports = authService;

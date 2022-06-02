@@ -17,15 +17,19 @@ const Reaction = new Schema(
       ref: 'User',
       type: mongoose.Types.ObjectId,
     },
+
     likedUser: {
       ref: 'User',
       type: mongoose.Types.ObjectId,
     },
+
     postId: {
       ref: 'Post',
       type: mongoose.Types.ObjectId,
     },
   },
+
   { timestamps: true },
 );
+
 module.exports = model('Reaction', Reaction);

@@ -90,6 +90,7 @@ class ReactionsService {
       });
 
       const result = [];
+
       reactions.map((reaction) => {
         result.push(setReactionBody(reaction));
       });
@@ -135,6 +136,7 @@ class ReactionsService {
       });
 
       const result = [];
+
       reactions.map((reaction) => {
         result.push(setReactionBody(reaction));
       });
@@ -148,7 +150,7 @@ class ReactionsService {
   async getReactionsFromDate(id, startDate, endDate) {
     try {
       const reactions = await Reaction.find({
-        userId: id,
+        likedUser: id,
         createdAt: { $gte: startDate, $lte: endDate },
       });
 
