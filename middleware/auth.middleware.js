@@ -9,7 +9,6 @@ const auth = (req, res, next) => {
 
   try {
     const token = req.headers.authorization;
-    //const token = req.headers.authorization.split(' ')[1]; {for postman check}
     if (!token) {
       return res.status(401).json({ msg: 'Authorization error' });
     }
