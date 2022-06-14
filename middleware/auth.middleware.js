@@ -9,11 +9,13 @@ const auth = (req, res, next) => {
 
   try {
     const token = req.headers.authorization;
+
     if (!token) {
       return res.status(401).json({ msg: 'Authorization error' });
     }
 
     const decoded = jwt.verify(token, config.get('secretKey'));
+
     if (!decoded) return res.status(500).json({ msg: 'Not valid' });
 
     const user = User.findOne({ _id: decoded.id });

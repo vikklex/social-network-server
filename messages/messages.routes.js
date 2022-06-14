@@ -5,7 +5,7 @@ const authMiddleware = require('../middleware/auth.middleware');
 const router = new Router();
 
 router
-  .post('/', /*authMiddleware, */ messagesController.createMessage)
-  .get('/:id', /*authMiddleware, */ messagesController.getMessage);
+  .post('/', authMiddleware, messagesController.createMessage)
+  .get('/:id', authMiddleware, messagesController.getMessage);
 
 module.exports = router;

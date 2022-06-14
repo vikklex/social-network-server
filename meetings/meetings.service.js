@@ -34,6 +34,7 @@ class MeetingsService {
 
     try {
       await newMeeting.save();
+
       return { status: '200', body: setMeetingBody(newMeeting) };
     } catch (err) {
       return SERVER_ERROR;
